@@ -1,20 +1,25 @@
 import * as dotenv from 'dotenv'
 dotenv.config()
 
-import * as path from 'path'
-import * as express from 'express'
+import { Server } from 'ws'
 
-const app = express()
-const port = process.env.PORT || 3000
-const dev = process.env.PROD === 'false'
+const port = 3000
 
-app.listen(port, () => {
-    console.log(`App is listening on port ${port}`)
+const wss = new Server({ port })
+
+wss.on('connection', async (ws) => {
+    console.log('connection!')
+    ws.send(
+        JSON.stringify({
+            type: 'eval',
+            fn: 'return turtle.turnLeft()',
+            nonce: 1,
+        })
+    )
+    // ws.on('message', async (message: string) => {
+    //     console.log('sending: ' + message)
+    //     ws.send('I got: ' + message)
+    // })
 })
 
-app.get('/', (req: express.Request, res: express.Response) => {
-    res.send('we did it!')
-    // res.sendFile(path.resolve(__dirname, 'frontEnd', 'index.html'))
-})
-
-// app.use(express.static(path.resolve(__dirname, 'frontEnd')))
+console.log('done')
