@@ -22,5 +22,7 @@ export abstract class Pastebin {
         console.log(code)
         // return this.cc.fs.writeToPath(this.getPath(), code)
         // return this.cc.shell.runPastebin('get', this.getCode(), this.getPath())
+
+        // make the turtle do this pastebin shell call client side
     }
 }
