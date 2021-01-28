@@ -1,13 +1,23 @@
 import WebSocket from 'ws'
 import { Computer } from './Computer'
+import { MainMenu } from './Programs/MainMenu'
+import { TorchMine } from './Programs/TorchMine'
+
+const programs = ['torchMine']
 
 export class TurtleC extends Computer {
     private fuelLevel: number
     private fuelLimit: number
     private selectedSlot: number
 
+    // programs
+    private menu: MainMenu
+    private torchMine: TorchMine
+
     constructor(ws: WebSocket) {
         super(ws)
+        this.menu = new MainMenu(this.cc, programs)
+        this.torchMine = new TorchMine(this.cc)
     }
 
     public init = async () => {
@@ -15,8 +25,14 @@ export class TurtleC extends Computer {
         this.fuelLevel = await this.cc.turtle.getFuelLevel()
         this.fuelLimit = await this.cc.turtle.getFuelLimit()
         this.selectedSlot = await this.cc.turtle.getSelectedSlot()
-        await this.cc.term.clear()
-        await this.cc.term.setCursorPos({ x: 5, y: 5 })
-        await this.cc.term.write('uwu')
+
+        while (true) {
+            const input = await this.menu.runMenu()
+            switch (input) {
+                case 'torchMine':
+                    await this.torchMine.run()
+                    break
+            }
+        }
     }
 }

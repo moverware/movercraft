@@ -2,35 +2,40 @@ import WebSocket from 'ws'
 
 import { Command } from './Command'
 import Cursor from '../interfaces/Cursor'
+import { Color } from '../interfaces/Color'
 
 export class Term extends Command {
     constructor(ws: WebSocket) {
         super(ws)
     }
 
-    public clear = async (): Promise<null> => {
-        return this.exec<null>('term.clear()')
+    public clear = async (): Promise<void> => {
+        return this.exec<void>('term.clear()')
     }
 
-    public clearLine = async (): Promise<null> => {
-        return this.exec<null>('term.clearLine()')
+    public clearLine = async (): Promise<void> => {
+        return this.exec<void>('term.clearLine()')
     }
 
     public getCursorPos = async (): Promise<Cursor> => {
         return this.exec<Cursor>(
-            '(function() x,y = term.getCursorPos(); return {x = x, y = y}  end)()'
+            '(function() x,y = term.getCursorPos(); print(x);return {x = x, y = y}  end)()'
         )
     }
 
-    public setCursorPos = async (cursor: Cursor): Promise<null> => {
-        return this.exec<null>(`term.setCursorPos(${cursor.x},${cursor.y})`)
+    public setCursorPos = async (cursor: Cursor): Promise<void> => {
+        return this.exec<void>(`term.setCursorPos(${cursor.x},${cursor.y})`)
     }
 
-    public scroll = async (lines: number): Promise<null> => {
-        return this.exec<null>(`term.scroll(${lines})`)
+    public scroll = async (lines: number): Promise<void> => {
+        return this.exec<void>(`term.scroll(${lines})`)
     }
 
-    public write = async (text: string): Promise<null> => {
-        return this.exec<null>(`term.write("${text}")`)
+    public write = async (text: string): Promise<void> => {
+        return this.exec<void>(`term.write("${text}")`)
+    }
+
+    public setTextColor = async (color: Color): Promise<void> => {
+        return this.exec<void>(`term.setTextColor(colors.${color})`)
     }
 }

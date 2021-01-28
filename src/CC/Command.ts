@@ -17,7 +17,7 @@ export class Command {
                 fn: `return ${val}`,
                 nonce,
             }
-            console.log(`return ${val}`)
+            // console.log(`return ${val}`)
             this.ws.send(JSON.stringify(command))
 
             const listener = (res: Res) => {
