@@ -9,6 +9,8 @@
         "target": "es5",
         "sourceMap": true,
         "removeComments": true,
-        "noStrictGenericChecks": true
+        "noStrictGenericChecks": true,
+        "esModuleInterop": true,
+        "plugins": [{ "name": "typescript-tslint-plugin" }]
     }
 }
