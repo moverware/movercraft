@@ -12,7 +12,8 @@
         "start:watch": "tsc -p ./tsconfig.backend.json --watch",
         "build:backend": "tsc -p ./tsconfig.backend.json",
         "build": "npm-run-all lint clean build:backend copyhtml",
-        "lint": "eslint -c .eslintrc.js --ext .ts .",
+        "lint": "",
+        "lint2": "eslint -c .eslintrc.js --ext .ts .",
         "test": "echo \"Error: no test specified\" && exit 1",
         "clean": "rimraf ./dist",
         "copyhtml": "cp index.html ./dist/index.html"

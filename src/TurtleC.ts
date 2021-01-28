@@ -15,5 +15,8 @@ export class TurtleC extends Computer {
         this.fuelLevel = await this.cc.turtle.getFuelLevel()
         this.fuelLimit = await this.cc.turtle.getFuelLimit()
         this.selectedSlot = await this.cc.turtle.getSelectedSlot()
+        await this.cc.term.clear()
+        await this.cc.term.setCursorPos({ x: 5, y: 5 })
+        await this.cc.term.write('uwu')
     }
 }
