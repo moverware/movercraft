@@ -59,7 +59,7 @@ export class StateMachine {
                 info.replayStep++
                 return [true, res]
             } else {
-                this.resetLabel(label)
+                info.replayStep = 0
                 return [false, null]
             }
         } else
@@ -67,6 +67,7 @@ export class StateMachine {
     }
 
     public hasReplay = (label: Label): [has: boolean, programName: string] => {
+        if (label === '__init__') throw new Error('Error: Bad label')
         if (this.machine.has(label)) {
             const info = this.machine.get(label)
             if (info.nextStep > 0) {
