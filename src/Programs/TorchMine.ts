@@ -1,9 +1,12 @@
 import { CC } from '../CC/CC'
+import { MT } from './MT'
 import { Pastebin } from './Pastebin'
 
 export class TorchMine extends Pastebin {
+    private mt: MT
     constructor(cc: CC) {
         super(cc)
+        this.mt = new MT(cc)
     }
 
     protected getCode(): string {
@@ -15,9 +18,10 @@ export class TorchMine extends Pastebin {
     }
 
     public run = async (): Promise<void> => {
-        console.log('updating!')
+        await this.mt.download()
         await this.update()
-        console.log('done!')
-        return this.cc.exec<void>(`loadfile("${this.getPath()}")`)
+        await this.cc.term.clear()
+        await this.cc.term.setCursorPos({ x: 1, y: 1 })
+        return this.cc.exec<void>(`dofile("${this.getPath()}")()`)
     }
 }

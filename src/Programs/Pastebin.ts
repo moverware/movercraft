@@ -14,15 +14,12 @@ export abstract class Pastebin {
         if (await this.cc.fs.exists(this.getPath())) {
             await this.cc.fs.delete(this.getPath())
         }
-        console.log('about to call pastebin')
         await this.cc.pastebinGet(this.getCode(), this.getPath())
-        console.log('done calling pastebin')
+
         // const code = await this.cc.http.get(
         //     `http://pastebin.com/raw/${this.getCode()}`
         // )
         // return this.cc.fs.writeToPath(this.getPath(), code)
         // return this.cc.shell.runPastebin('get', this.getCode(), this.getPath())
-
-        // make the turtle do this pastebin shell call client side
     }
 }

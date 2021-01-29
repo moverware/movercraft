@@ -5,7 +5,7 @@ import { Term } from './Term'
 import { Command } from './Command'
 import { Shell } from './Shell'
 import { FS } from './FS'
-import { HTTP } from './http'
+import { HTTP } from './HTTP'
 
 export class CC extends Command {
     public turtle: Turtle

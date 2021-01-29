@@ -3,7 +3,7 @@ import { Computer } from './Computer'
 import { MainMenu } from './Programs/MainMenu'
 import { TorchMine } from './Programs/TorchMine'
 
-const programs = ['torchMine']
+const programs = ['torchMine', 'hello Jules']
 
 export class TurtleC extends Computer {
     private fuelLevel: number
