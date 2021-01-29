@@ -1,11 +1,10 @@
 import WebSocket from 'ws'
+import { Label, StateMachine } from '../StateMachine'
 
 import { Command } from './Command'
 
-export class Shell extends Command {
-    constructor(ws: WebSocket) {
-        super(ws)
-    }
+export class Shell {
+    constructor(private command: Command) {}
 
     public runPastebin = async (
         mode: 'put' | 'get',
@@ -14,11 +13,11 @@ export class Shell extends Command {
     ): Promise<boolean> => {
         switch (mode) {
             case 'put':
-                return this.exec<boolean>(
+                return this.command.exec<boolean>(
                     `shell.run("pastebin", "put", "${code}")`
                 )
             case 'get':
-                return this.exec<boolean>(
+                return this.command.exec<boolean>(
                     `shell.run("pastebin", "get", "${code}", "${path}")`
                 )
         }

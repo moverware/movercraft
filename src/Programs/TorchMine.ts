@@ -20,8 +20,6 @@ export class TorchMine extends Pastebin {
     public run = async (): Promise<void> => {
         await this.mt.download()
         await this.update()
-        await this.cc.term.clear()
-        await this.cc.term.setCursorPos({ x: 1, y: 1 })
-        return this.cc.exec<void>(`dofile("${this.getPath()}")()`)
+        return this.cc.command.exec<void>(`dofile("${this.getPath()}")()`)
     }
 }

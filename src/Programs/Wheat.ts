@@ -1,20 +1,21 @@
 import { CC } from '../CC/CC'
 import { Pastebin } from './Pastebin'
 
-export class MT extends Pastebin {
+export class Wheat extends Pastebin {
     constructor(cc: CC) {
         super(cc)
     }
 
     protected getCode(): string {
-        return '1BKN25c6'
+        return 'JVdYcAdE'
     }
 
     protected getFilename(): string {
-        return 'mt.lua'
+        return 'wheat.lua'
     }
 
-    public download = async (): Promise<void> => {
+    public run = async (): Promise<void> => {
         await this.update()
+        return this.cc.command.exec<void>(`dofile("${this.getPath()}")()`)
     }
 }

@@ -6,8 +6,10 @@ import { Command } from './Command'
 import { Shell } from './Shell'
 import { FS } from './FS'
 import { HTTP } from './HTTP'
+import { Label, StateMachine } from '../StateMachine'
 
-export class CC extends Command {
+export class CC {
+    public command: Command
     public turtle: Turtle
     public os: OS
     public term: Term
@@ -16,19 +18,31 @@ export class CC extends Command {
     public fs: FS
     public http: HTTP
 
-    constructor(ws: WebSocket) {
-        super(ws)
-        this.turtle = new Turtle(ws)
-        this.os = new OS(ws)
-        this.term = new Term(ws)
-        this.shell = new Shell(ws)
-        this.fs = new FS(ws)
-        this.http = new HTTP(ws)
+    constructor(
+        ws: WebSocket,
+        private label: Label,
+        private machine: StateMachine
+    ) {
+        this.command = new Command(ws, machine, label)
+        this.turtle = new Turtle(this.command)
+        this.os = new OS(this.command)
+        this.term = new Term(this.command)
+        this.shell = new Shell(this.command)
+        this.fs = new FS(this.command)
+        this.http = new HTTP(this.command)
 
         this.read = async (): Promise<string> => {
-            let val = await this.exec<string>('read()')
+            let val = await this.command.exec<string>('read()')
             if (val === undefined || val == null) val = ''
             return val
         }
+    }
+
+    public resetPState = () => {
+        this.machine.resetLabel(this.label)
+    }
+
+    public hasReplay = (): [has: boolean, programName: string] => {
+        return this.machine.hasReplay(this.label)
     }
 }

@@ -10,12 +10,17 @@ export abstract class Pastebin {
         return `/moverTools/${this.getFilename()}`
     }
 
+    protected resetTerm = async () => {
+        await this.cc.term.clear()
+        await this.cc.term.setCursorPos({ x: 1, y: 1 })
+    }
+
     public update = async (): Promise<void> => {
         if (await this.cc.fs.exists(this.getPath())) {
             await this.cc.fs.delete(this.getPath())
         }
-        await this.cc.pastebinGet(this.getCode(), this.getPath())
-
+        await this.cc.command.pastebinGet(this.getCode(), this.getPath())
+        await this.resetTerm()
         // const code = await this.cc.http.get(
         //     `http://pastebin.com/raw/${this.getCode()}`
         // )
