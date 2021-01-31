@@ -1,5 +1,5 @@
 import WebSocket from 'ws'
-import { getNonce } from 'get-nonce'
+import { v4 as uuidv4 } from 'uuid'
 
 import { Cmd } from '../interfaces/SendCommands'
 import CResponse from '../interfaces/CResponse'
@@ -24,7 +24,7 @@ export class Command {
 
     private sendCommand = <T>(command: Cmd): Promise<T> => {
         return new Promise((resolve, reject) => {
-            const nonce = getNonce()
+            const nonce = uuidv4()
             command.nonce = nonce
 
             // console.log(`return ${val}`)
@@ -51,6 +51,11 @@ export class Command {
             }
 
             this.ws.on('message', listener)
+            if (this.ws.listenerCount('message') > this.ws.getMaxListeners()) {
+                console.log(
+                    'Adding too many listeners. Did you clear your loops on disconnect?'
+                )
+            }
         })
     }
 
@@ -87,9 +92,5 @@ export class Command {
     public setProgramName = (name: string) => {
         this.programName = name
         this.trackingCmds = true
-    }
-
-    public clearProgramName = () => {
-        this.programName = null
     }
 }

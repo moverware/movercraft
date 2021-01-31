@@ -44,7 +44,11 @@ export class TurtleC extends Computer {
         this.fuelLimit = await this.cc.turtle.getFuelLimit()
         this.selectedSlot = await this.cc.turtle.getSelectedSlot()
 
-        await this.programLoop()
+        try {
+            await this.programLoop()
+        } catch (err) {
+            console.log(err)
+        }
     }
 
     private programLoop = async () => {

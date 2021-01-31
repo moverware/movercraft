@@ -8,6 +8,7 @@ interface LabelInfo {
     nextStep: number
     replayStep: number
     programName: string
+    running: boolean
 }
 
 type Label = string
@@ -26,6 +27,7 @@ export class StateMachine {
             nextStep: 0,
             replayStep: 0,
             programName,
+            running: true,
         })
     }
 
@@ -51,6 +53,15 @@ export class StateMachine {
         }
     }
 
+    public resetLabelCount = (label: Label) => {
+        if (this.machine.has(label)) {
+            const info: LabelInfo = this.machine.get(label)
+            info.nextStep = 0
+            info.replayStep = 0
+            info.state = new Map<Step, Res>()
+        }
+    }
+
     public getNextReplay = (label: Label): [suc: boolean, res: any] => {
         if (this.machine.has(label)) {
             const info = this.machine.get(label)
@@ -62,15 +73,16 @@ export class StateMachine {
                 info.replayStep = 0
                 return [false, null]
             }
-        } else
-            throw new Error(`Error: label ${label} not found in state machine`)
+        } else {
+            return [false, null]
+        }
     }
 
     public hasReplay = (label: Label): [has: boolean, programName: string] => {
         if (label === '__init__') throw new Error('Error: Bad label')
         if (this.machine.has(label)) {
             const info = this.machine.get(label)
-            if (info.nextStep > 0) {
+            if (info.running) {
                 return [true, info.programName]
             }
         } else return [false, null]

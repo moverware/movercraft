@@ -19,7 +19,7 @@ export class CC {
     public http: HTTP
 
     constructor(
-        ws: WebSocket,
+        private ws: WebSocket,
         private label: Label,
         private machine: StateMachine
     ) {
@@ -38,11 +38,21 @@ export class CC {
         }
     }
 
+    // To reset replay state and not resume on reconnect
     public resetPState = () => {
         this.machine.resetLabel(this.label)
     }
 
+    // To reset replay state but resume on reconnect
+    public resetPCount = () => {
+        this.machine.resetLabelCount(this.label)
+    }
+
     public hasReplay = (): [has: boolean, programName: string] => {
         return this.machine.hasReplay(this.label)
+    }
+
+    public isConnected = () => {
+        return this.ws.readyState === this.ws.OPEN
     }
 }
