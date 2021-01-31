@@ -3,7 +3,7 @@ import { v4 as uuidv4 } from 'uuid'
 
 import { Cmd } from '../interfaces/SendCommands'
 import CResponse from '../interfaces/CResponse'
-import { StateMachine, Label } from '../StateMachine'
+import { StateMachine, UUID } from '../StateMachine'
 
 type Res = string
 
@@ -15,7 +15,7 @@ export class Command {
     constructor(
         private ws: WebSocket,
         protected machine: StateMachine,
-        protected label: Label
+        protected uuid: UUID
     ) {
         this.replay = false
         this.programName = null
@@ -36,7 +36,7 @@ export class Command {
                     if (cRes?.nonce === nonce) {
                         if (this.trackingCmds) {
                             this.machine.addCmd(
-                                this.label,
+                                this.uuid,
                                 cRes.data,
                                 this.programName
                             )
@@ -61,7 +61,7 @@ export class Command {
 
     public exec = <T>(val: string): Promise<T> => {
         if (this.replay) {
-            const res = this.machine.getNextReplay(this.label)
+            const res = this.machine.getNextReplay(this.uuid)
             if (res[0]) {
                 return new Promise((resolve) => {
                     resolve(res[1])

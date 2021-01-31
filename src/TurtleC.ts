@@ -5,7 +5,7 @@ import { AttackPB } from './Programs/AttackPB'
 import { MainMenu } from './Programs/MainMenu'
 import { TorchMine } from './Programs/TorchMine'
 import { Wheat } from './Programs/Wheat'
-import { Label, StateMachine } from './StateMachine'
+import { StateMachine } from './StateMachine'
 
 export class TurtleC extends Computer {
     private fuelLevel: number

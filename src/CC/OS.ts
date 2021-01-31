@@ -1,8 +1,5 @@
-import WebSocket from 'ws'
-
 import { Command } from './Command'
 import { OSEvent, OSKeyEvent, OSMouseEvent } from '../interfaces/OSEvents'
-import { Label, StateMachine } from '../StateMachine'
 
 type Filter = 'key' | 'mouse_click'
 

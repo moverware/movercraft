@@ -1,6 +1,3 @@
-import WebSocket from 'ws'
-import { Label, StateMachine } from '../StateMachine'
-
 import { Command } from './Command'
 
 export class Turtle {

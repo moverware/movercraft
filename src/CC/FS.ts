@@ -1,6 +1,3 @@
-import WebSocket from 'ws'
-import { Label, StateMachine } from '../StateMachine'
-
 import { Command } from './Command'
 
 export class FS {
@@ -17,6 +14,12 @@ export class FS {
     public writeToPath = async (path: string, data: string): Promise<void> => {
         return this.command.exec<void>(
             `(function() local f = fs.open("${path}", "w"); f.write("${data}"); f.close() end)()`
+        )
+    }
+
+    public readFromPath = async (path: string): Promise<string> => {
+        return this.command.exec<string>(
+            `(function() local f = fs.open("${path}", "r"); local data = f.readAll(); f.close(); return data end)()`
         )
     }
 }

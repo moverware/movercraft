@@ -3,7 +3,7 @@ type Res = any
 
 type State = Map<Step, Res>
 
-interface LabelInfo {
+interface UUIDInfo {
     state: State
     nextStep: number
     replayStep: number
@@ -11,18 +11,18 @@ interface LabelInfo {
     running: boolean
 }
 
-type Label = string
+type UUID = string
 
-type Machine = Map<Label, LabelInfo>
+type Machine = Map<UUID, UUIDInfo>
 
 export class StateMachine {
     private machine: Machine
     constructor() {
-        this.machine = new Map<Label, LabelInfo>()
+        this.machine = new Map<UUID, UUIDInfo>()
     }
 
-    private initLabel = (label: Label, programName: string) => {
-        this.machine.set(label, {
+    private initState = (uuid: UUID, programName: string) => {
+        this.machine.set(uuid, {
             state: new Map<Step, Res>(),
             nextStep: 0,
             replayStep: 0,
@@ -31,40 +31,40 @@ export class StateMachine {
         })
     }
 
-    private addToState = (info: LabelInfo, res: Res) => {
+    private addToState = (info: UUIDInfo, res: Res) => {
         info.state.set(info.nextStep, res)
         info.nextStep++
     }
 
-    public addCmd = (label: Label, result: Res, programName: string) => {
-        if (this.machine.has(label)) {
-            const info: LabelInfo = this.machine.get(label)
+    public addCmd = (uuid: UUID, result: Res, programName: string) => {
+        if (this.machine.has(uuid)) {
+            const info: UUIDInfo = this.machine.get(uuid)
             this.addToState(info, result)
         } else {
-            this.initLabel(label, programName)
-            const info: LabelInfo = this.machine.get(label)
+            this.initState(uuid, programName)
+            const info: UUIDInfo = this.machine.get(uuid)
             this.addToState(info, result)
         }
     }
 
-    public resetLabel = (label: Label) => {
-        if (this.machine.has(label)) {
-            this.machine.delete(label)
+    public resetState = (uuid: UUID) => {
+        if (this.machine.has(uuid)) {
+            this.machine.delete(uuid)
         }
     }
 
-    public resetLabelCount = (label: Label) => {
-        if (this.machine.has(label)) {
-            const info: LabelInfo = this.machine.get(label)
+    public resetStateCount = (uuid: UUID) => {
+        if (this.machine.has(uuid)) {
+            const info: UUIDInfo = this.machine.get(uuid)
             info.nextStep = 0
             info.replayStep = 0
             info.state = new Map<Step, Res>()
         }
     }
 
-    public getNextReplay = (label: Label): [suc: boolean, res: any] => {
-        if (this.machine.has(label)) {
-            const info = this.machine.get(label)
+    public getNextReplay = (uuid: UUID): [suc: boolean, res: any] => {
+        if (this.machine.has(uuid)) {
+            const info = this.machine.get(uuid)
             if (info.replayStep < info.nextStep) {
                 const res = info.state.get(info.replayStep)
                 info.replayStep++
@@ -78,10 +78,10 @@ export class StateMachine {
         }
     }
 
-    public hasReplay = (label: Label): [has: boolean, programName: string] => {
-        if (label === '__init__') throw new Error('Error: Bad label')
-        if (this.machine.has(label)) {
-            const info = this.machine.get(label)
+    public hasReplay = (uuid: UUID): [has: boolean, programName: string] => {
+        if (uuid === '__init__') throw new Error('Error: Bad UUID')
+        if (this.machine.has(uuid)) {
+            const info = this.machine.get(uuid)
             if (info.running) {
                 return [true, info.programName]
             }
@@ -89,4 +89,4 @@ export class StateMachine {
     }
 }
 
-export { Label }
+export { UUID }

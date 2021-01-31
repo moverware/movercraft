@@ -6,7 +6,7 @@ import { Command } from './Command'
 import { Shell } from './Shell'
 import { FS } from './FS'
 import { HTTP } from './HTTP'
-import { Label, StateMachine } from '../StateMachine'
+import { UUID, StateMachine } from '../StateMachine'
 
 export class CC {
     public command: Command
@@ -20,10 +20,10 @@ export class CC {
 
     constructor(
         private ws: WebSocket,
-        private label: Label,
+        private uuid: UUID,
         private machine: StateMachine
     ) {
-        this.command = new Command(ws, machine, label)
+        this.command = new Command(ws, machine, uuid)
         this.turtle = new Turtle(this.command)
         this.os = new OS(this.command)
         this.term = new Term(this.command)
@@ -40,16 +40,16 @@ export class CC {
 
     // To reset replay state and not resume on reconnect
     public resetPState = () => {
-        this.machine.resetLabel(this.label)
+        this.machine.resetState(this.uuid)
     }
 
     // To reset replay state but resume on reconnect
     public resetPCount = () => {
-        this.machine.resetLabelCount(this.label)
+        this.machine.resetStateCount(this.uuid)
     }
 
     public hasReplay = (): [has: boolean, programName: string] => {
-        return this.machine.hasReplay(this.label)
+        return this.machine.hasReplay(this.uuid)
     }
 
     public isConnected = () => {

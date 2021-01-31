@@ -1,9 +1,6 @@
-import WebSocket from 'ws'
-
 import { Command } from './Command'
 import Cursor from '../interfaces/Cursor'
 import { Color } from '../interfaces/Color'
-import { Label, StateMachine } from '../StateMachine'
 
 export class Term {
     constructor(private command: Command) {}
