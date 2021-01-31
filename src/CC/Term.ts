@@ -6,35 +6,40 @@ export class Term {
     constructor(private command: Command) {}
 
     public clear = async (): Promise<void> => {
-        return this.command.exec<void>('term.clear()')
+        return this.command.exec<void>('term.clear()', true)
     }
 
     public clearLine = async (): Promise<void> => {
-        return this.command.exec<void>('term.clearLine()')
+        return this.command.exec<void>('term.clearLine()', true)
     }
 
     public getCursorPos = async (): Promise<Cursor> => {
         return this.command.exec<Cursor>(
-            '(function() x,y = term.getCursorPos(); print(x);return {x = x, y = y}  end)()'
+            '(function() x,y = term.getCursorPos(); print(x);return {x = x, y = y}  end)()',
+            true
         )
     }
 
     public setCursorPos = async (cursor: Cursor): Promise<void> => {
         return this.command.exec<void>(
-            `term.setCursorPos(${cursor.x},${cursor.y})`
+            `term.setCursorPos(${cursor.x},${cursor.y})`,
+            true
         )
     }
 
     public scroll = async (lines: number): Promise<void> => {
-        return this.command.exec<void>(`term.scroll(${lines})`)
+        return this.command.exec<void>(`term.scroll(${lines})`, true)
     }
 
     public write = async (text: string): Promise<void> => {
-        return this.command.exec<void>(`term.write("${text}")`)
+        return this.command.exec<void>(`term.write("${text}")`, true)
     }
 
     public setTextColor = async (color: Color): Promise<void> => {
-        return this.command.exec<void>(`term.setTextColor(colors.${color})`)
+        return this.command.exec<void>(
+            `term.setTextColor(colors.${color})`,
+            true
+        )
     }
 
     public reset = async (): Promise<void> => {

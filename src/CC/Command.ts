@@ -22,7 +22,10 @@ export class Command {
         this.trackingCmds = false
     }
 
-    private sendCommand = <T>(command: Cmd): Promise<T> => {
+    private sendCommand = <T>(
+        command: Cmd,
+        sendInReplay: boolean = false
+    ): Promise<T> => {
         return new Promise((resolve, reject) => {
             const nonce = uuidv4()
             command.nonce = nonce
@@ -34,7 +37,7 @@ export class Command {
                 try {
                     const cRes: CResponse = JSON.parse(res)
                     if (cRes?.nonce === nonce) {
-                        if (this.trackingCmds) {
+                        if (this.trackingCmds && !sendInReplay) {
                             this.machine.addCmd(
                                 this.uuid,
                                 cRes.data,
@@ -59,21 +62,29 @@ export class Command {
         })
     }
 
-    public exec = <T>(val: string): Promise<T> => {
+    public exec = <T>(
+        val: string,
+        sendInReplay: boolean = false
+    ): Promise<T> => {
         if (this.replay) {
-            const res = this.machine.getNextReplay(this.uuid)
-            if (res[0]) {
-                return new Promise((resolve) => {
-                    resolve(res[1])
-                })
+            if (!sendInReplay) {
+                const res = this.machine.getNextReplay(this.uuid)
+                if (res[0]) {
+                    return new Promise((resolve) => {
+                        resolve(res[1])
+                    })
+                }
+                this.replay = false
+                this.trackingCmds = true
             }
-            this.replay = false
-            this.trackingCmds = true
         }
-        return this.sendCommand({
-            type: 'eval',
-            fn: `return ${val}`,
-        })
+        return this.sendCommand(
+            {
+                type: 'eval',
+                fn: `return ${val}`,
+            },
+            sendInReplay
+        )
     }
 
     public pastebinGet = (code: string, path: string): Promise<boolean> => {
