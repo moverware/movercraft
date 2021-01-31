@@ -44,7 +44,6 @@ export class Computer {
 
     private getUUID = async () => {
         const exists = await this.cc.fs.exists(UUID_PATH)
-        console.log(`Exists: ${exists}`)
         if (exists) {
             this.uuid = await this.cc.fs.readFromPath(UUID_PATH)
         } else {
