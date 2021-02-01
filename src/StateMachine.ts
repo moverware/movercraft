@@ -1,9 +1,11 @@
+import { Firestore } from '@google-cloud/firestore'
+
 type Step = number
 type Res = any
 
-type State = Map<Step, Res>
+type State = Res[]
 
-interface UUIDInfo {
+interface ComputerState {
     state: State
     nextStep: number
     replayStep: number
@@ -13,64 +15,95 @@ interface UUIDInfo {
 
 type UUID = string
 
-type Machine = Map<UUID, UUIDInfo>
-
 export class StateMachine {
-    private machine: Machine
+    private db: Firestore
+    private collection: FirebaseFirestore.CollectionReference
+
     constructor() {
-        this.machine = new Map<UUID, UUIDInfo>()
+        this.db = new Firestore({ projectId: 'movercraft' })
+        this.collection = this.db.collection('computers')
     }
 
-    private initState = (uuid: UUID, programName: string) => {
-        this.machine.set(uuid, {
-            state: new Map<Step, Res>(),
+    private initRunning = async (uuid: UUID, programName: string) => {
+        const doc = this.collection.doc(uuid)
+        await doc.set({
+            state: [],
             nextStep: 0,
             replayStep: 0,
             programName,
             running: true,
         })
+
+        return doc.get()
     }
 
-    private addToState = (info: UUIDInfo, res: Res) => {
-        info.state.set(info.nextStep, res)
-        info.nextStep++
+    private initNotRunning = async (uuid: UUID) => {
+        const doc = this.collection.doc(uuid)
+        await doc.set({
+            state: [],
+            nextStep: 0,
+            replayStep: 0,
+            programName: null,
+            running: false,
+        })
+
+        return doc.get()
+    }
+
+    private addToState = async (uuid: UUID, res: Res, programName: string) => {
+        const docRef = this.collection.doc(uuid)
+        let doc = await docRef.get()
+        if (!doc.exists) {
+            doc = await this.initRunning(uuid, programName)
+        }
+
+        let cState: ComputerState = doc.data() as ComputerState
+
+        if (!cState.running) {
+            doc = await this.initRunning(uuid, programName)
+            cState = doc.data() as ComputerState
+        }
+
+        cState.state[cState.nextStep] = res
+        cState.nextStep++
+        doc.ref.set(cState)
     }
 
     public addCmd = (uuid: UUID, result: Res, programName: string) => {
-        if (this.machine.has(uuid)) {
-            const info: UUIDInfo = this.machine.get(uuid)
-            this.addToState(info, result)
-        } else {
-            this.initState(uuid, programName)
-            const info: UUIDInfo = this.machine.get(uuid)
-            this.addToState(info, result)
+        this.addToState(uuid, result, programName)
+    }
+
+    public resetState = async (uuid: UUID) => {
+        await this.initNotRunning(uuid)
+    }
+
+    public resetStateCount = async (uuid: UUID) => {
+        const docRef = this.collection.doc(uuid)
+        const doc = await docRef.get()
+        if (doc.exists) {
+            const cState = doc.data() as ComputerState
+            cState.nextStep = 0
+            cState.replayStep = 0
+            cState.state = []
+            doc.ref.set(cState)
         }
     }
 
-    public resetState = (uuid: UUID) => {
-        if (this.machine.has(uuid)) {
-            this.machine.delete(uuid)
-        }
-    }
-
-    public resetStateCount = (uuid: UUID) => {
-        if (this.machine.has(uuid)) {
-            const info: UUIDInfo = this.machine.get(uuid)
-            info.nextStep = 0
-            info.replayStep = 0
-            info.state = new Map<Step, Res>()
-        }
-    }
-
-    public getNextReplay = (uuid: UUID): [suc: boolean, res: any] => {
-        if (this.machine.has(uuid)) {
-            const info = this.machine.get(uuid)
-            if (info.replayStep < info.nextStep) {
-                const res = info.state.get(info.replayStep)
-                info.replayStep++
+    public getNextReplay = async (
+        uuid: UUID
+    ): Promise<[suc: boolean, res: any]> => {
+        const docRef = this.collection.doc(uuid)
+        const doc = await docRef.get()
+        if (doc.exists) {
+            const cState = doc.data() as ComputerState
+            if (cState.replayStep < cState.nextStep) {
+                const res = cState.state[cState.replayStep]
+                cState.replayStep++
+                doc.ref.set(cState)
                 return [true, res]
             } else {
-                info.replayStep = 0
+                cState.replayStep = 0
+                doc.ref.set(cState)
                 return [false, null]
             }
         } else {
@@ -78,13 +111,19 @@ export class StateMachine {
         }
     }
 
-    public hasReplay = (uuid: UUID): [has: boolean, programName: string] => {
+    public hasReplay = async (
+        uuid: UUID
+    ): Promise<[has: boolean, programName: string]> => {
         if (uuid === '__init__') throw new Error('Error: Bad UUID')
-        if (this.machine.has(uuid)) {
-            const info = this.machine.get(uuid)
-            if (info.running) {
-                return [true, info.programName]
+        const docRef = this.collection.doc(uuid)
+        const doc = await docRef.get()
+
+        if (doc.exists) {
+            const cState = doc.data() as ComputerState
+            if (cState.running) {
+                return [true, cState.programName]
             }
+            return [false, null]
         } else return [false, null]
     }
 }

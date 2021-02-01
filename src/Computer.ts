@@ -59,7 +59,7 @@ export class Computer {
             if (cRes?.kill === true) {
                 await this.getUUID()
                 console.log(`killing ${this.uuid}`)
-                this.machine.resetState(this.uuid)
+                await this.machine.resetState(this.uuid)
             }
         } catch (err) {
             console.log(`Error parsing kill message check for ${this.uuid}`)

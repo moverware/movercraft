@@ -53,7 +53,7 @@ export class TurtleC extends Computer {
 
     private programLoop = async () => {
         while (true) {
-            const hasReplay = this.cc.hasReplay()
+            const hasReplay = await this.cc.hasReplay()
             const replay = hasReplay[0]
             const input = replay ? hasReplay[1] : await this.menu.runMenu()
 

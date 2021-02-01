@@ -21,8 +21,15 @@ export class Attack extends Program implements ReplayProgram {
         await this.cc.term.reset()
         await this.cc.term.write('Attacking!')
         while (true) {
-            this.cc.turtle.attack()
-            await this.sleep(500)
+            // this.cc.turtle.attack()
+            // await this.sleep(500)
+
+            for (let i = 0; i < 4; i++) {
+                for (let ii = 0; ii < 10; ii++) {
+                    await this.cc.turtle.forward()
+                }
+                await this.cc.turtle.turnLeft()
+            }
 
             this.cc.resetPCount()
             if (!this.cc.isConnected()) break

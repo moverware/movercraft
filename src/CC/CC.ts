@@ -39,16 +39,18 @@ export class CC {
     }
 
     // To reset replay state and not resume on reconnect
-    public resetPState = () => {
-        this.machine.resetState(this.uuid)
+    public resetPState = async () => {
+        await this.machine.resetState(this.uuid)
     }
 
     // To reset replay state but resume on reconnect
-    public resetPCount = () => {
-        this.machine.resetStateCount(this.uuid)
+    public resetPCount = async () => {
+        await this.machine.resetStateCount(this.uuid)
     }
 
-    public hasReplay = (): [has: boolean, programName: string] => {
+    public hasReplay = async (): Promise<
+        [has: boolean, programName: string]
+    > => {
         return this.machine.hasReplay(this.uuid)
     }
 

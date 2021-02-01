@@ -33,12 +33,12 @@ export class Command {
             // console.log(`return ${val}`)
             this.ws.send(JSON.stringify(command))
 
-            const listener = (res: Res) => {
+            const listener = async (res: Res) => {
                 try {
                     const cRes: CResponse = JSON.parse(res)
                     if (cRes?.nonce === nonce) {
                         if (this.trackingCmds && !sendInReplay) {
-                            this.machine.addCmd(
+                            await this.machine.addCmd(
                                 this.uuid,
                                 cRes.data,
                                 this.programName
@@ -62,13 +62,13 @@ export class Command {
         })
     }
 
-    public exec = <T>(
+    public exec = async <T>(
         val: string,
         sendInReplay: boolean = false
     ): Promise<T> => {
         if (this.replay) {
             if (!sendInReplay) {
-                const res = this.machine.getNextReplay(this.uuid)
+                const res = await this.machine.getNextReplay(this.uuid)
                 if (res[0]) {
                     return new Promise((resolve) => {
                         resolve(res[1])
