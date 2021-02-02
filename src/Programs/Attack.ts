@@ -11,7 +11,7 @@ export class Attack extends Program implements ReplayProgram {
         return new Promise((resolve) => setTimeout(resolve, ms))
     }
 
-    public getName = () => 'attackBeta'
+    public getName = () => 'attack_1.0'
 
     public run = async (replay: boolean): Promise<void> => {
         this.cc.command.setProgramName(this.getName())
@@ -21,15 +21,8 @@ export class Attack extends Program implements ReplayProgram {
         await this.cc.term.reset()
         await this.cc.term.write('Attacking!')
         while (true) {
-            // this.cc.turtle.attack()
-            // await this.sleep(500)
-
-            for (let i = 0; i < 4; i++) {
-                for (let ii = 0; ii < 10; ii++) {
-                    await this.cc.turtle.forward()
-                }
-                await this.cc.turtle.turnLeft()
-            }
+            this.cc.turtle.attack()
+            await this.sleep(500)
 
             this.cc.resetPCount()
             if (!this.cc.isConnected()) break

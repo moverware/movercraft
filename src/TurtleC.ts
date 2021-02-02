@@ -16,8 +16,8 @@ export class TurtleC extends Computer {
     private menu: MainMenu
     private torchMine: TorchMine
     private wheat: Wheat
-    private attack: AttackPB
-    private attackBeta: Attack
+    private attackLocal: AttackPB
+    private attack: Attack
     private programs: string[]
 
     constructor(ws: WebSocket, machine: StateMachine) {
@@ -29,14 +29,14 @@ export class TurtleC extends Computer {
 
         this.torchMine = new TorchMine(this.cc)
         this.wheat = new Wheat(this.cc)
-        this.attack = new AttackPB(this.cc)
-        this.attackBeta = new Attack(this.cc)
+        this.attackLocal = new AttackPB(this.cc)
+        this.attack = new Attack(this.cc)
 
         this.programs = [
-            'torchMine',
-            'wheat',
-            'attack',
-            this.attackBeta.getName(),
+            this.torchMine.getName(),
+            this.wheat.getName(),
+            this.attackLocal.getName(),
+            this.attack.getName(),
         ]
         this.menu = new MainMenu(this.cc, this.programs)
 
@@ -58,18 +58,24 @@ export class TurtleC extends Computer {
             const input = replay ? hasReplay[1] : await this.menu.runMenu()
 
             switch (input) {
-                case 'torchMine':
+                case this.torchMine.getName():
                     await this.torchMine.run()
                     break
-                case 'wheat':
+                case this.wheat.getName():
                     await this.wheat.run()
                     break
-                case 'attack':
-                    await this.attack.run()
+                case this.attackLocal.getName():
+                    await this.attackLocal.run()
                     break
-                case this.attackBeta.getName():
-                    await this.attackBeta.run(replay)
+                case this.attack.getName():
+                    await this.attack.run(replay)
                     break
+                default:
+                    // Replaying an outdated program
+                    console.log(
+                        'Resetting P State, should only happen if a program was updated recently'
+                    )
+                    await this.cc.resetPState()
             }
         }
     }

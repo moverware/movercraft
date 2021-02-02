@@ -14,6 +14,8 @@ export class MT extends Pastebin {
         return 'mt.lua'
     }
 
+    public getName = () => 'mt_local'
+
     public download = async (): Promise<void> => {
         await this.update()
     }

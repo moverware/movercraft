@@ -5,11 +5,13 @@ const ROWS_PER_PAGE = 11
 export class MainMenu {
     private page: number
     private totalPages: number
+    private multiFound: boolean
     constructor(private cc: CC, private programs: string[]) {
         this.page = 1
         this.totalPages = Math.ceil(
             Math.ceil(this.programs.length / 2) / ROWS_PER_PAGE
         )
+        this.multiFound = false
     }
 
     private resetMenu = async (): Promise<void> => {
@@ -53,10 +55,37 @@ export class MainMenu {
         return false
     }
 
+    private checkForProgram = async (name: string): Promise<string> => {
+        const n = name.toLowerCase()
+        let found = []
+        for (const program of this.programs) {
+            const p = program.toLowerCase()
+            const prefix = p.split('_')[0]
+
+            if (prefix.includes(n)) found.push(program)
+        }
+        if (found.length === 1) return found[0]
+
+        found = []
+        for (const program of this.programs) {
+            const p = program.toLowerCase()
+
+            if (p.includes(n)) found.push(program)
+        }
+        if (found.length === 1) return found[0]
+        if (found.length > 1) {
+            await this.displayError(`Multiple programs found: ${name}`)
+            this.multiFound = true
+        }
+
+        return null
+    }
+
     public runMenu = async (): Promise<string> => {
         await this.resetMenu()
         let input = await this.cc.read()
-        while (!this.programs.includes(input)) {
+        let programName = await this.checkForProgram(input)
+        while (!programName) {
             if (this.checkNext(input)) {
                 const suc = this.incPage()
                 if (!suc) {
@@ -67,13 +96,17 @@ export class MainMenu {
                 if (!suc) {
                     await this.displayError('No previous page')
                 }
-            } else {
+            } else if (!this.multiFound) {
                 await this.displayError(`Not Found: ${input}`)
+            } else {
+                this.multiFound = false
             }
+
             await this.resetMenu()
             input = await this.cc.read()
+            programName = await this.checkForProgram(input)
         }
-        return input
+        return programName
     }
 
     public displayError = async (error: string): Promise<void> => {

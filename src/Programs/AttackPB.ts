@@ -14,6 +14,8 @@ export class AttackPB extends Pastebin {
         return 'attack.lua'
     }
 
+    public getName = (): string => 'attack_local'
+
     public run = async (): Promise<void> => {
         await this.update()
         return this.cc.command.exec<void>(`dofile("${this.getPath()}")()`)

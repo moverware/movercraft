@@ -17,6 +17,8 @@ export class TorchMine extends Pastebin {
         return 'torchMine.lua'
     }
 
+    public getName = () => 'torchMine_local'
+
     public run = async (): Promise<void> => {
         await this.mt.download()
         await this.update()

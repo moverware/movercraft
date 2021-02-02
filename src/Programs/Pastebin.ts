@@ -5,6 +5,7 @@ export abstract class Pastebin {
 
     protected abstract getCode(): string
     protected abstract getFilename(): string
+    public abstract getName(): string
 
     protected getPath(): string {
         return `/moverTools/${this.getFilename()}`

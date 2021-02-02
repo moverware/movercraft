@@ -14,6 +14,8 @@ export class Wheat extends Pastebin {
         return 'wheat.lua'
     }
 
+    public getName = () => 'wheat_local'
+
     public run = async (): Promise<void> => {
         await this.update()
         return this.cc.command.exec<void>(`dofile("${this.getPath()}")()`)
