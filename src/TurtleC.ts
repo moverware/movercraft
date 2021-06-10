@@ -5,6 +5,7 @@ import { AttackPB } from './Programs/AttackPB'
 import { MainMenu } from './Programs/MainMenu'
 import { TorchMine } from './Programs/TorchMine'
 import { Wheat } from './Programs/Wheat'
+import { RyanMine } from './Programs/RyanMine_local'
 import { StateMachine } from './StateMachine'
 
 export class TurtleC extends Computer {
@@ -18,6 +19,7 @@ export class TurtleC extends Computer {
     private wheat: Wheat
     private attackLocal: AttackPB
     private attack: Attack
+    private ryanMine: RyanMine
     private programs: string[]
 
     constructor(ws: WebSocket, machine: StateMachine) {
@@ -31,12 +33,14 @@ export class TurtleC extends Computer {
         this.wheat = new Wheat(this.cc)
         this.attackLocal = new AttackPB(this.cc)
         this.attack = new Attack(this.cc)
+        this.ryanMine = new RyanMine(this.cc)
 
         this.programs = [
             this.torchMine.getName(),
             this.wheat.getName(),
             this.attackLocal.getName(),
             this.attack.getName(),
+            this.ryanMine.getName(),
         ]
         this.menu = new MainMenu(this.cc, this.programs)
 
@@ -69,6 +73,9 @@ export class TurtleC extends Computer {
                     break
                 case this.attack.getName():
                     await this.attack.run(replay)
+                    break
+                case this.ryanMine.getName():
+                    await this.ryanMine.run()
                     break
                 default:
                     // Replaying an outdated program
