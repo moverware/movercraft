@@ -21,6 +21,7 @@ export class StateMachine {
 
     constructor() {
         this.db = new Firestore({ projectId: 'movercraft' })
+        this.db.settings({ ignoreUndefinedProperties: true })
         this.collection = this.db.collection('computers')
     }
 

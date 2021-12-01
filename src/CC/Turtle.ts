@@ -42,4 +42,21 @@ export class Turtle {
     public attack = async (): Promise<boolean> => {
         return this.command.exec<boolean>('turtle.attack()')
     }
+
+    public getItemDetail = async (): Promise<{
+        count: number
+        name: string
+    } | null> => {
+        return this.command.exec<{ count: number; name: string }>(
+            'turtle.getItemDetail()'
+        )
+    }
+
+    public select = async (slot: number): Promise<boolean> => {
+        return this.command.exec<boolean>(`turtle.select(${slot})`)
+    }
+
+    public placeDown = async (): Promise<boolean> => {
+        return this.command.exec<boolean>('turtle.placeDown()')
+    }
 }
