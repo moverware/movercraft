@@ -53,7 +53,7 @@ export class BusyBee extends Program implements ReplayProgram {
         let slot = 1
         await this.cc.turtle.select(slot)
         let selected = await this.cc.turtle.getItemDetail()
-        while (selected === null || selected?.name !== blockMap.get(block)) {
+        while (!selected || selected?.name !== blockMap.get(block)) {
             slot++
             await this.cc.turtle.select(slot)
             selected = await this.cc.turtle.getItemDetail()
