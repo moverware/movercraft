@@ -3,6 +3,7 @@ import { Program } from './Program'
 import { ReplayProgram } from './ReplayProgram'
 
 const log = 'minecraft:spruce_log'
+const leaves = 'minecraft:spruce_leaves'
 
 export class Spruce2x2 extends Program implements ReplayProgram {
     constructor(private cc: CC) {
@@ -50,9 +51,9 @@ export class Spruce2x2 extends Program implements ReplayProgram {
 
     private doLevel = async () => {
         for (let i = 0; i < 4; i++) {
-            await this.cc.turtle.safeDig(log)
-            await this.cc.turtle.safeDigUp(log)
-            await this.cc.turtle.safeDigDown(log)
+            await this.cc.turtle.safeDig([log, leaves])
+            await this.cc.turtle.safeDigUp([log, leaves])
+            await this.cc.turtle.safeDigDown([log, leaves])
             await this.cc.turtle.forward()
             await this.cc.turtle.turnLeft()
         }

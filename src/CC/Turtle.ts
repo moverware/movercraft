@@ -125,28 +125,28 @@ export class Turtle {
         )
     }
 
-    public safeDig = async (blockName: string) => {
+    public safeDig = async (blockNames: string[]) => {
         if (await this.inspectSuccess()) {
             const data = await this.inspectData()
-            if (data?.name === blockName) {
+            if (data?.name && blockNames.includes(data.name)) {
                 await this.dig()
             }
         }
     }
 
-    public safeDigUp = async (blockName: string) => {
+    public safeDigUp = async (blockNames: string[]) => {
         if (await this.inspectUpSuccess()) {
             const data = await this.inspectUpData()
-            if (data?.name === blockName) {
+            if (data?.name && blockNames.includes(data.name)) {
                 await this.digUp()
             }
         }
     }
 
-    public safeDigDown = async (blockName: string) => {
+    public safeDigDown = async (blockNames: string[]) => {
         if (await this.inspectDownSuccess()) {
             const data = await this.inspectDownData()
-            if (data?.name === blockName) {
+            if (data?.name && blockNames.includes(data.name)) {
                 await this.digDown()
             }
         }
