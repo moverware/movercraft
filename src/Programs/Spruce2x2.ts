@@ -36,7 +36,6 @@ export class Spruce2x2 extends Program implements ReplayProgram {
 
             await this.cc.term.reset()
             await this.cc.term.write('Done!')
-            await this.cc.os.pullEvent('key')
 
             await this.cc.resetPState()
         } catch (err) {
