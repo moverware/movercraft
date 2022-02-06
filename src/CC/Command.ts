@@ -64,7 +64,8 @@ export class Command {
 
     public exec = async <T>(
         val: string,
-        sendInReplay: boolean = false
+        sendInReplay: boolean = false,
+        multipart: 'part1' | 'part2' = undefined
     ): Promise<T> => {
         if (this.replay) {
             if (!sendInReplay) {
@@ -77,6 +78,18 @@ export class Command {
                 this.replay = false
                 this.trackingCmds = true
             }
+        }
+        if (multipart === 'part1') {
+            return this.sendCommand(
+                { type: 'eval', fn: `part1, part2 = ${val}; return part1` },
+                sendInReplay
+            )
+        }
+        if (multipart === 'part2') {
+            return this.sendCommand(
+                { type: 'eval', fn: `part1, part2 = ${val}; return part2` },
+                sendInReplay
+            )
         }
         return this.sendCommand(
             {

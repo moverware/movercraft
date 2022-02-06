@@ -8,6 +8,7 @@ import { Wheat } from './Programs/Wheat'
 import { RyanMine } from './Programs/RyanMine_local'
 import { StateMachine } from './StateMachine'
 import { BusyBee } from './Programs/BusyBee'
+import { Spruce2x2 } from './Programs/Spruce2x2'
 
 export class TurtleC extends Computer {
     private fuelLevel: number
@@ -23,6 +24,7 @@ export class TurtleC extends Computer {
     private ryanMine: RyanMine
     private programs: string[]
     private busyBee: BusyBee
+    private spruce2x2: Spruce2x2
 
     constructor(ws: WebSocket, machine: StateMachine) {
         super(ws, machine)
@@ -37,6 +39,7 @@ export class TurtleC extends Computer {
         this.attack = new Attack(this.cc)
         this.ryanMine = new RyanMine(this.cc)
         this.busyBee = new BusyBee(this.cc)
+        this.spruce2x2 = new Spruce2x2(this.cc)
 
         this.programs = [
             this.torchMine.getName(),
@@ -45,6 +48,7 @@ export class TurtleC extends Computer {
             this.attack.getName(),
             this.ryanMine.getName(),
             this.busyBee.getName(),
+            this.spruce2x2.getName(),
         ]
         this.menu = new MainMenu(this.cc, this.programs)
 
@@ -83,6 +87,8 @@ export class TurtleC extends Computer {
                     break
                 case this.busyBee.getName():
                     await this.busyBee.run(replay)
+                case this.spruce2x2.getName():
+                    await this.spruce2x2.run(replay)
                 default:
                     // Replaying an outdated program
                     console.log(

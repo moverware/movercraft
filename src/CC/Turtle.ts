@@ -1,4 +1,9 @@
 import { Command } from './Command'
+export interface InspectData {
+    state: Record<string, unknown>
+    name: string
+    tags: Record<string, unknown>
+}
 
 export class Turtle {
     constructor(private command: Command) {}
@@ -43,6 +48,18 @@ export class Turtle {
         return this.command.exec<boolean>('turtle.attack()')
     }
 
+    public dig = async (): Promise<boolean> => {
+        return this.command.exec<boolean>('turtle.dig()')
+    }
+
+    public digUp = async (): Promise<boolean> => {
+        return this.command.exec<boolean>('turtle.digUp()')
+    }
+
+    public digDown = async (): Promise<boolean> => {
+        return this.command.exec<boolean>('turtle.digDown()')
+    }
+
     public getItemDetail = async (): Promise<{
         count: number
         name: string
@@ -58,5 +75,92 @@ export class Turtle {
 
     public placeDown = async (): Promise<boolean> => {
         return this.command.exec<boolean>('turtle.placeDown()')
+    }
+
+    public inspectSuccess = async (): Promise<{
+        success: boolean
+    }> => {
+        return this.command.exec<{
+            success: boolean
+        }>('turtle.inspect()', false, 'part1')
+    }
+
+    public inspectData = async (): Promise<InspectData> => {
+        return this.command.exec<InspectData>(
+            'turtle.inspect()',
+            false,
+            'part2'
+        )
+    }
+
+    public inspectUpSuccess = async (): Promise<{
+        success: boolean
+    }> => {
+        return this.command.exec<{
+            success: boolean
+        }>('turtle.inspectUp()', false, 'part1')
+    }
+
+    public inspectUpData = async (): Promise<InspectData> => {
+        return this.command.exec<InspectData>(
+            'turtle.inspectUp()',
+            false,
+            'part2'
+        )
+    }
+
+    public inspectDownSuccess = async (): Promise<{
+        success: boolean
+    }> => {
+        return this.command.exec<{
+            success: boolean
+        }>('turtle.inspectDown()', false, 'part1')
+    }
+
+    public inspectDownData = async (): Promise<InspectData> => {
+        return this.command.exec<InspectData>(
+            'turtle.inspectDown()',
+            false,
+            'part2'
+        )
+    }
+
+    public safeDig = async (blockName: string) => {
+        if (await this.inspectSuccess()) {
+            const data = await this.inspectData()
+            if (data?.name === blockName) {
+                await this.dig()
+            }
+        }
+    }
+
+    public safeDigUp = async (blockName: string) => {
+        if (await this.inspectUpSuccess()) {
+            const data = await this.inspectUpData()
+            if (data?.name === blockName) {
+                await this.digUp()
+            }
+        }
+    }
+
+    public safeDigDown = async (blockName: string) => {
+        if (await this.inspectDownSuccess()) {
+            const data = await this.inspectDownData()
+            if (data?.name === blockName) {
+                await this.digDown()
+            }
+        }
+    }
+
+    public detect = async (): Promise<boolean> => {
+        return this.command.exec<boolean>('turtle.detect()')
+    }
+
+    public detectUp = async (): Promise<boolean> => {
+        return this.command.exec<boolean>('turtle.detectUp()')
+    }
+
+    public detectDown = async (): Promise<boolean> => {
+        return this.command.exec<boolean>('turtle.detectDown()')
     }
 }
