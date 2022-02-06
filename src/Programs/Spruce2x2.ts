@@ -28,16 +28,17 @@ export class Spruce2x2 extends Program implements ReplayProgram {
             let vert = 0
             while (await this.cc.turtle.detect()) {
                 await this.doLevel()
-                vert = +(await this.navigateUp())
+                vert += await this.navigateUp()
             }
-            while (vert > 0) {
+            for (; vert > 0; vert--) {
                 await this.cc.turtle.down()
             }
+
             await this.cc.term.reset()
             await this.cc.term.write('Done!')
             await this.cc.os.pullEvent('key')
 
-            this.cc.resetPCount()
+            await this.cc.resetPState()
         } catch (err) {
             await this.cc.term.reset()
             await this.cc.term.write(`Error: ${err.message}`)

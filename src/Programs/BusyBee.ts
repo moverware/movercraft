@@ -41,6 +41,7 @@ export class BusyBee extends Program implements ReplayProgram {
                 await this.cc.turtle.up()
                 await this.doLayer(layer)
             }
+            await this.cc.resetPState()
         } catch (err) {
             await this.cc.term.reset()
             await this.cc.term.write(`Error: ${err.message}`)

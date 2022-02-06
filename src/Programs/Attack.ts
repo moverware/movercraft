@@ -24,7 +24,7 @@ export class Attack extends Program implements ReplayProgram {
             this.cc.turtle.attack()
             await this.sleep(500)
 
-            this.cc.resetPCount()
+            await this.cc.resetPCount()
             if (!this.cc.isConnected()) break
         }
     }

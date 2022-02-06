@@ -40,7 +40,7 @@ export class CC {
 
     // To reset replay state and not resume on reconnect
     public resetPState = async () => {
-        await this.machine.resetState(this.uuid)
+        return this.machine.resetState(this.uuid)
     }
 
     // To reset replay state but resume on reconnect
