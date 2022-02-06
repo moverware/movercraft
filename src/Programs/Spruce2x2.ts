@@ -31,6 +31,7 @@ export class Spruce2x2 extends Program implements ReplayProgram {
                 vert += await this.navigateUp()
             }
             for (; vert > 0; vert--) {
+                await this.cc.turtle.digDown()
                 await this.cc.turtle.down()
             }
 
